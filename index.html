@@ -1,0 +1,22 @@
+---
+layout: master
+section: accueil
+lang: fr
+---
+
+{% for post in site.posts limit: 5 %}
+  <article class="full-width">
+    <h1><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h1>
+    <aside class="infos">Écrit par {{ post.author }}
+    	le {{ post.date | localize: ":short" }}.
+	</aside>
+
+    {% if post.excerpt %}
+        {{ post.excerpt | markdownify }}
+    {% else %}
+        {{ post.content }}
+    {% endif %}
+
+    <p class="read-next"><a href="{{ site.url }}{{ post.url }}">Lire la suite</a></p>
+  </article>
+{% endfor %}

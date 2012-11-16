@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<title>TEA - The Ebook Alternative - Blog technique — derniers articles</title>
+	<link href="http://localhost:3000/atom.xml" rel="self"/>
+	<link href="http://localhost:3000"/>
+	<updated>2012-09-02T18:07:49+02:00</updated>
+	<id>http://localhost:3000</id>
+	<author>
+		<name>TEA</name>
+		<email>developpeurs-tea@tea-ebook.com</email>
+	</author>
+
+	
+	<entry>
+		<title></title>
+		<link href="http://localhost:3000/Automatisation-Magento.html" />
+		<updated>2012-08-17T00:00:00+02:00</updated>
+		<id>http://localhost:3000/Automatisation-Magento</id>
+		<content type="xhtml">
+			<div xmlns='http://www.w3.org/1999/xhtml'>
+			<p><a href="http://casperjs.org/">CasperJS</a> est un petit outil écrit en Javascript qui virtualise un navigateur et propose une API permettant de le manipuler. Ainsi, suivre des liens, télécharger des binaires, remplir des formulaires ou prendre des captures d'écrans peut être scripté. Casper est donc un outil idéal pour automatiser des tâches de navigation et de remplissage de formulaire, comme la création et la configuration d'une boutique dans Magento.</p>
+
+<p>Il est à noter que les scripts Casper peuvent être écrit en Javascript mais aussi en <a href="http://coffeescript.org/">Coffeescript</a>, un langage qui se compile en Javascript. Nous avons choisi la 2ème alternative pour la lisibilité de sa syntaxe.</p>
+
+<h2>Naviguer dans l'interface de Magento</h2>
+
+<p>CasperJS propose nativement les fonctions <code>click(selector)</code> et <code>clickLabel(selector, type)</code> qui permettent de suivre un lien :</p>
+
+<div class="highlight"><pre><code class="coffeescript"><span class="c1"># &lt;a href=&quot;...&quot;&gt;My link is beautiful&lt;/a&gt;</span>
+<span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span>
+  <span class="nx">@clickLabel</span> <span class="s1">&#39;My link is beautiful&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span>
+
+<span class="c1"># &lt;button type=&quot;submit&quot;&gt;But my button is sexier&lt;/button&gt;</span>
+<span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span> 
+  <span class="nx">@clickLabel</span> <span class="s1">&#39;But my button is sexier&#39;</span><span class="p">,</span> <span class="s1">&#39;button&#39;</span>
+</code></pre>
+</div>
+
+
+<p>Le code source des liens composant le menu de l'administration de Magento n'est pas aussi propre. Pour se simplifier la vie, on peut alors créer des fonctions spécifiques :</p>
+
+<div class="highlight"><pre><code class="coffeescript"><span class="c1"># Liens du menu : &lt;a href=&quot;...&quot;&gt;&lt;span&gt;Label&lt;/span&gt;&lt;/a&gt;</span>
+<span class="nv">casper.clickLabelMagento = </span><span class="nf">(selector) -&gt;</span>
+  <span class="nx">@click</span> <span class="nx">x</span><span class="p">(</span><span class="s2">&quot;//span[contains(text(), &#39;#{ selector }&#39;)]/..&quot;</span><span class="p">)</span>
+
+<span class="c1"># Liens de sections de configuration : &lt;a href=&quot;#&quot;&gt;&lt;span&gt;       Label        &lt;/span&gt;&lt;/a&gt;</span>
+<span class="nv">casper.clickConfigurationMagento = </span><span class="nf">(selector) -&gt;</span>
+  <span class="nx">@click</span> <span class="nx">x</span><span class="p">(</span><span class="s2">&quot;//ul[@id=&#39;system_config_tabs&#39;]//span[contains(text(), &#39;#{ selector }&#39;)]/..&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># Exemple : accès à la section &#39;Design&#39; de la configuration</span>
+<span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span>
+  <span class="nx">@clickLabelMagento</span> <span class="s1">&#39;Configuration&#39;</span>
+<span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span>
+  <span class="nx">@test</span><span class="p">.</span><span class="nx">assertTitle</span> <span class="s2">&quot;Configuration / Système / Admin Magento&quot;</span><span class="p">,</span> <span class="s2">&quot;Configuration&quot;</span>
+  <span class="nx">@test</span><span class="p">.</span><span class="nx">info</span> <span class="s2">&quot;Current location is &quot;</span> <span class="o">+</span> <span class="nx">@getCurrentUrl</span><span class="p">()</span>
+<span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span>
+  <span class="nx">@clickConfigurationMagento</span> <span class="s2">&quot;Design&quot;</span>
+</code></pre>
+</div>
+
+
+<h2>Configurer un magasin</h2>
+
+<p>Le système de configuration de Magento se base sur un système de <em>portée</em> : on peut agir sur le <em>website</em>, le <em>magasin</em> ou le <em>storeview</em>. Ainsi, à chaque niveau, il est possible de surcharger la configuration par défaut du niveau parent.</p>
+
+<p><img src="http://localhost:3000//media/magento-scope.png" alt="Choix de la portée de la configuration dans Magento" /></p>
+
+<p>Pour configurer un magasin via un script Casper, la première étape est donc de sélectionner le bon scope de configuration dans le menu déroulant :</p>
+
+<div class="highlight"><pre><code class="coffeescript"><span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span>
+  <span class="nx">@evaluate</span> <span class="nf">(value) -&gt;</span> 
+    <span class="c1"># Selecting requested scope</span>
+    <span class="nv">element = </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;select#store_switcher&#39;</span><span class="p">)</span>
+    <span class="nv">element.value = </span><span class="nx">value</span>
+    <span class="c1"># Firing onchange event to change configuration</span>
+    <span class="nv">evt = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="s1">&#39;HTMLEvents&#39;</span><span class="p">)</span>
+    <span class="nx">evt</span><span class="p">.</span><span class="nx">initEvent</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+    <span class="nx">element</span><span class="p">.</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span>
+  <span class="p">,</span> <span class="nv">value : </span><span class="s2">&quot;store_test&quot;</span>
+</code></pre>
+</div>
+
+
+<p>La fonction <code>evaluate</code> permet d'exécuter du code dans le contexte de la page distante. Ici, on sélectionne l'élément voulu dans le menu déroulant (dans l'exemple, le store view ayant le code test) puis on déclenche un évènement <code>onchange</code> pour que le changement soit pris en compte.</p>
+
+<p>Une fois sur la page de configuration du niveau choisi, il n'y a plus qu'à renseigner les champs nécessaires. CasperJS permet nativement de gérer très simplement les formulaires, mais encore une fois, il va falloir s'adapter à Magento pour prendre en compte la case <em>"Valeur du site web"</em> :</p>
+
+<p><img src="http://localhost:3000/media/magento-configuration.png" alt="Formulaire de configuration dans Magento" /></p>
+
+<div class="highlight"><pre><code class="coffeescript"><span class="nv">casper.disableInherit = </span><span class="nf">(selector) -&gt;</span>
+  <span class="nv">isChecked = </span><span class="nx">@evaluate</span> <span class="nf">(selector) -&gt;</span>
+    <span class="k">return</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="nx">selector</span><span class="p">).</span><span class="nx">checked</span>
+  <span class="p">,</span> <span class="nv">selector : </span><span class="nx">selector</span>
+  <span class="k">if</span> <span class="nx">isChecked</span>
+    <span class="nx">@click</span> <span class="nx">selector</span>
+
+
+<span class="c1"># Configuration des URLs du magasin</span>
+<span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span>
+  <span class="nx">@clickLabelMagento</span> <span class="s1">&#39;Configuration&#39;</span>
+<span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span>
+  <span class="nx">@clickConfigurationMagento</span> <span class="s2">&quot;Web&quot;</span>
+<span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span>
+  <span class="nx">@disableInherit</span> <span class="s2">&quot;#web_unsecure_base_url_inherit&quot;</span>
+  <span class="nx">@disableInherit</span> <span class="s2">&quot;#web_secure_base_url_inherit&quot;</span>
+
+  <span class="nx">@fill</span> <span class="s2">&quot;form#config_edit_form&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;groups[unsecure][fields][base_url][value]&quot;</span>  <span class="o">:</span> <span class="s2">&quot;http://test-magento.dev.tea-ebook.com&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;groups[secure][fields][base_url][value]&quot;</span>    <span class="o">:</span> <span class="s2">&quot;https://test-magento.dev.tea-ebook.com&quot;</span>
+    <span class="p">},</span> <span class="kc">true</span>
+<span class="nx">casper</span><span class="p">.</span><span class="k">then</span> <span class="o">-&gt;</span>
+  <span class="nx">@test</span><span class="p">.</span><span class="nx">assertTextExists</span> <span class="s2">&quot;La configuration a été sauvegardée.&quot;</span><span class="p">,</span> <span class="s2">&quot;Configuration URLs magasin&quot;</span>
+</code></pre>
+</div>
+
+
+<p>Ainsi, le code précédent s'assure par la fonction <code>disableInherit</code> que les cases <em>"Valeur du site web"</em> sont bien décochée avant de remplir le formulaire (ici, les URLs du magasin).</p>
+
+			</div>
+		</content>
+	</entry>
+	
+	<entry>
+		<title></title>
+		<link href="http://localhost:3000/Savoir-s-arreter.html" />
+		<updated>2012-07-19T00:00:00+02:00</updated>
+		<id>http://localhost:3000/Savoir-s-arreter</id>
+		<content type="xhtml">
+			<div xmlns='http://www.w3.org/1999/xhtml'>
+			<p>Même pendant un sprint, il est intéressant de pouvoir prendre du temps pour tester et <strong>essayer de nouvelles choses</strong> (passer le déploiement d'un projet sous Capistrano, mettre en place Behat, refactoriser telle partie du code...) Mais, pour que cette recherche soit efficace et utile, il est encore plus important de <strong>savoir s'arrêter</strong>. Le risque est sinon d'y passer beaucoup plus de temps que prévu initialement (sous réserve que l'on se soit déjà accordé un temps limité), de dévier, de s'embourber, de tomber dans le perfectionnisme, et au final, de ne jamais arriver à un <strong>état fini et utilisable</strong>.</p>
+
+<p>Il faut donc réussir à lâcher prise, à se dire <em>« Je n'ai pas pu aller au bout de mon objectif, mais ce n'est pas grave. Ma solution est utilisable pour le moment, et est améliorable dans le futur. »</em>.</p>
+
+<p>Dans notre équipe, nous utilisons le terme du <strong>time-boxing</strong>. Se time-boxer, c'est <em>s'accorder du temps limité</em> (20 minutes, 2 heures, l'après-midi, 2 jours...) pour essayer une nouvelle technologie, étudier une possibilité, améliorer un aspect du code...</p>
+
+<ul>
+<li>Quand le tiers du temps accordé s'est écoulé, on s'arrête une première fois pour évaluer la situation&#160;:&#160;a-t-on avancé ? arrivera-t-on à faire la tâche estimée dans les temps ? Il peut-être déjà temps de <strong>redéfinir le périmètre</strong> à quelque chose de plus réaliste.</li>
+<li>Aux deux tiers de temps écoulé, on s'arrête une deuxième fois pour se poser la question : cela vaut-il le coup d'investir encore plus de temps (limité) dans la tâche, ou vaut-il mieux s'arrêter là ?</li>
+</ul>
+
+
+<p>En choisissant de s'arrêter, on peut alors passer le tiers de temps restant à terminer ce qui a été commencé dans l'objectif d'arriver à un état propre, utilisable.</p>
+
+<p>Au final, le time-boxing nous permet de concentrer nos efforts sur une tâche, et d'éviter la boucle infinie du temps engagé (<em>« J'ai déjà passé la matinée là dessus, si je m'arrête maintenant, ça n'aura servi à rien»</em>). À la fin du temps imparti, la tâche peut surement encore être améliorée, il reste probablement encore des aspects à gérer, mais elle est <strong>utilisable en l'état</strong> (même si la procédure de déploiement automatique ne gère pas les retours en arrière; si les tests Behat ne couvrent pas tout l'applicatif; ou si le code nécessite encore un peu plus de refactoring).</p>
+
+<p>Le travail a été amorcé, des choses ont été mises en places et ça marche. À notre charge d'y revenir plus tard si les manques sont vraiment indispensables.</p>
+
+			</div>
+		</content>
+	</entry>
+	
+	<entry>
+		<title></title>
+		<link href="http://localhost:3000/mixIT-2012.html" />
+		<updated>2012-04-30T00:00:00+02:00</updated>
+		<id>http://localhost:3000/mixIT-2012</id>
+		<content type="xhtml">
+			<div xmlns='http://www.w3.org/1999/xhtml'>
+			<p>Pour inaugurer le blog dev de TEA, voici mon retour sur Mix-IT 2012. Je vais revenir sur chacune des conférences auxquelles j'ai assisté, d'abord pour mes collègues qui n'y étaient pas mais aussi pour offrir un retour à l'équipe et aux orateurs de Mix IT.</p>
+
+<p>Brièvement, <a href="http://www.mix-it.fr/">Mix IT</a> (prononcer <em>mixité</em>) est un évènement qui propose un ensemble de conférences tout au long d'une journée. Les sujets varient autour de thèmes principaux : Agilité, Technologies, Web...</p>
+
+<p>Cette année, MixIT a rassemblé plus de 400 personnes. Les conférences se déroulant en même temps dans 5 salles différentes, chacun peut alors construire son programme et assister aux conférences qui l'intéresse. Voici mon retour qui est donc surêment bien différent d'un autre :</p>
+
+<h2>Keynote initiale</h2>
+
+<p>La journée a commencé par 2 keynotes. Je ne m'attarderais pas sur la première, présentée par Martin Gömer, employé de Google, qui laissait un peu trop le sentiment d'entendre une publicité - mais c'est le jeu des sponsors, ce que je comprends parfaitement.</p>
+
+<p>En revanche, la keynote <em>Le droit a l'erreur</em>, présenté par Claire Bondel (<a href="https://twitter.com/claireblondel">@claireblondel</a>) était vraiment intéressante. Claire a partagé son expérience (ou plutôt celle de ses enfants) sur les différentes méthode d'apprentissage dans le monde et a rappelé que se tromper, c'était avant tout une occassion d'apprendre de ses erreurs. On commence à souvent entendre ce discours, mais tant qu'il n'est pas vraiment rentré dans les moeurs, je pense qu'il n'est jamais inutile d'insister.</p>
+
+<h2>L'expérience des billes rouges</h2>
+
+<p>J'ai ensuite choisi de commencer la journée par un atelier agile : Alexis Monville (<a href="https://twitter.com/alexismonville">@alexismonville</a>), grâce a un jeu de rôle et d'improvisation, nous a permis de réfléchir sur les méthodes et surtout les erreurs du management. Il a rappelé les 14 points de <a href="http://fr.wikipedia.org/wiki/William_Edwards_Deming">Deming</a> (vieux de plus de 30 ans, mais toujours vrais) pour transformer le management d'une organisation  - dont entre autre :</p>
+
+<ul>
+<li><em>Faire disparaître la crainte, en sorte que chacun puisse travailler efficacement pour sa société</em></li>
+<li><em>Instaurer une formation permanente pour tous les cadres et tous les membres de la société</em></li>
+<li><em>Supprimer les obstacles qui privent les ouvriers, agents de maîtrise, ingénieurs et cadres de leur droit à la fierté du travail</em></li>
+</ul>
+
+
+<p>Cet atelier m'a permis de confirmer ce dont je m'étais très vite rendue compte : quitter mon ancienne boîte (et ses méthodes de management) pour rejoindre TEA était une excellente décision (<em>non non, mes chefs ne sont pas derrière moi à l'heure ou j'écris ces lignes</em>) !</p>
+
+<h2>Painless Web App Development with Backbone</h2>
+
+<p>J'ai choisi cette conférence pour le sujet : <a href="http://backbonejs.org/"><code>backbone.js</code></a>, dont j'avais beaucoup entendu parler sans prendre le temps de pousser plus loin. Je suis tombée sur la norvégienne Bodil Stokke (<a href="https://twitter.com/bodiltv">@bodiltv</a>) et ses leggings Space Invaders qui a <em>tout simplement</em> codé devant nous un petit client twitter en moins d'une heure. J'ai adoré cette manière vraiment concrète de découvrir une technologie par sa syntaxe, l'agencement du projet et les différents concepts qu'elle utilise. </p>
+
+<h2>Lightning Talks</h2>
+
+<p>Là encore, j'ai adoré. Je ne m'étais pas renseignée sur les sujets qui allaient être abordés, chacun a donc été une surprise, souvent très bonne.</p>
+
+<p>Je retiendrais vraiment la première présentation tenue par Jean-Baptiste Dusseaut (<a href="https://twitter.com/BodySplash">@BodySplash</a>) sur <em>La voie du programmeur</em>. Je m'y suis beaucoup reconnue, et je compte vraiment la recommander à tous mes collègues/ex-collègues/copains de promos ! En plus de ça, l'utilisation de <a href="https://github.com/bartaz/impress.js">impress.js</a> pour les slides était très réussi. Et, cerise sur le gateau, il y avait un lolcat par slide. Franchement, qui dit mieux ?</p>
+
+<p>Mais ce n'était pas le seul lightning talk intéressant, loin de là ! Je pense notamment à Alfred Almendra (<a href="https://twitter.com/AlfredAlmendra">@AlfredAlmendra</a>) et son texte sur le turnover, presque poétique (à une conférence de geeks, qui l'eût cru !) et à Alexis Monville (encore) sur le passage de la génération X à Y.</p>
+
+<p>Une autre très intéressante était celle de Pamela Fox (<a href="https://twitter.com/pamelafox">@pamelafox</a>) sur <em>L'expérience développeur</em> : quel développeur n'a jamais été confronté à une documentation mal concue ?
+a des APIs mal construites ? Il s'agissait initialement d'une conférence d'une heure, que là encore, je recommanderai vraiment.</p>
+
+<p>Pour finir sur les lightning talks, je retiens aussi la conférence de Youri Bonnaffé (<a href="https://twitter.com/youribm">@youribm</a>) sur comment <em>Décorer son open space</em>. Derrière le sujet léger, il y a une idée vraiment intéressante : avoir sous les yeux le résultat des tests unitaires nous force à nous en occuper. C'est définitivement un sujet que notre équipe souhaite approfondir. Nous avons déjà pleins d'idées d'items à afficher sur un panic board (le résultat des tests unitaires, un checkup de l'état des serveurs, la courbe des ventes de livres numériques, les derniers tickets du SAV, un monitoring des logs en prod...). Il ne nous manque plus que prendre un peu de temps pour le faire !</p>
+
+<h2>Kanban pour les nuls</h2>
+
+<p>Là, je voudrais m'excuser, mais j'avais oublié que suivre un cours/une conférence après manger, c'était dur ! J'avoue ne pas avoir retenu grand chose du premier quart d'heure (digestion, toussa toussa). Mais quand même, le sujet était intéressant, alors j'ai fini par accrocher. Une fois compris le concept de <em>flux tiré</em> plutôt que <em>poussé</em>, j'ai vraiment compris l'intérêt par rapport à Scrum et j'ai maintenant envie d'en savoir plus. Nous appliquons pour le moment chez TEA la méthode Scrum, mais je pense lancer la discussion pour voir si Kanban ne pourrait pas coller encore mieux à notre process.</p>
+
+<h2>Create Mobile Applications With PhoneGap</h2>
+
+<p>Pamela Fox a présenté pendant une heure un retour très complet sur la création d'une application mobile. Ça tombait bien, car c'est un sujet qui a beaucoup été abordé chez TEA : application web ou application native ? Si application native, comment peut-on être présent sur plusieurs plateformes sans multiplier les coûts de développements ?</p>
+
+<p>À chaque étape du projet, Pamela a listé les options envisageables, et ce qui a conduit ses choix. Elle a parlé de technologies et de frameworks que je connaissais déjà, mais aussi de technologies que j'ai découvertes et qui ont l'air vraiment intéressantes. Et, au dela du sujet <em>application mobile</em> qui lui-même m'intéressait, cette conférence était selon moi un parfait modèle des conférences de type <em>retour sur expérience</em>.</p>
+
+<h2>ZeroMQ is Magic from the Future</h2>
+
+<p><a href="http://www.zeromq.org/"><code>zeroMQ</code></a> est la conférence qui m'a le plus déçue. Je l'avais choisi car nous parlions à TEA d'utiliser dans un futur proche la technologie de ce type pour des traitements asynchrones. Ne connaissant <code>zeroMQ</code> quasiment que le nom, j'avais envie de savoir à quoi ça servait, et ce qu'on pouvait en faire... Le titre de la conférence était enthousiasmant, mais hélas je n'en ai pas appris beaucoup plus. Finalement, j'ai plutot appris comment Pieter Hintjens (<a href="https://twitter.com/hintjens">@hintjens</a>) gère la communauté autour du programme, ce qui finalement est tout de même intéressant - mais pas ce que j'attendais.</p>
+
+<h2>Keynote finale</h2>
+
+<p>La keynote finale a été présenté par Pamela Fox (après tout, elle venait de San Franciso, elle méritait bien de parler 3 fois). Selon elle, n'importe qui pourrait et <u>devrait</u> apprendre l'informatique, et aurait à y gagner, qu'il soit pompier, artiste ou architecte. L'idée est très intéressante sur le fond, mais malheureusement, les nombreux exemples d'initiatives fournies par Pamela étaient en anglais. Il serait intéressant de faire un listing des ressources existant en français (<a href="http://www.siteduzero.com/">Site du zéro</a> mais après ?). D'ailleurs, il n'existe à ma connaissance, aucune université française qui mettrait des slides ou des vidéos à disposition de n'importe qui (c'est d'ailleurs déjà difficile d'obtenir ce genre d'outils quand on y est étudiant...)</p>
+
+<h2>Mon impression générale</h2>
+
+<p>Ma journée était vraiment variée mais équilibrée : j'ai choisi mes conférences moitié français, moitié anglais; j'ai assisté à au moins une conférence dans chacun des thèmes proposés et puis j'ai pu apprécier différents formats : conférence, lightning talk, atelier, live coding.</p>
+
+<p>Donc vraiment, Mix-IT, merci de proposer des conférences de cette qualité et de cette diversité, surtout à ce prix là !</p>
+
+			</div>
+		</content>
+	</entry>
+	
+</feed>

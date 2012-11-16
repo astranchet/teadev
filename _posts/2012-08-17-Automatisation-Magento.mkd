@@ -1,0 +1,114 @@
+---
+layout: post
+tags : [Casperjs, Magento]
+title: Automatiser des tâches sous Magento avec CasperJS
+author: Anne-Sophie
+email: astranchet@tea-ebook.com
+twitter: annso_
+---
+
+{% excerpt %}
+[CasperJS](http://casperjs.org/) est un petit outil écrit en Javascript qui virtualise un navigateur et propose une API permettant de le manipuler. Ainsi, suivre des liens, télécharger des binaires, remplir des formulaires ou prendre des captures d'écrans peut être scripté. Casper est donc un outil idéal pour automatiser des tâches de navigation et de remplissage de formulaire, comme la création et la configuration d'une boutique dans Magento.
+{% endexcerpt %}
+
+Il est à noter que les scripts Casper peuvent être écrit en Javascript mais aussi en [Coffeescript](http://coffeescript.org/), un langage qui se compile en Javascript. Nous avons choisi la 2ème alternative pour la lisibilité de sa syntaxe.
+
+
+## Naviguer dans l'interface de Magento
+
+CasperJS propose nativement les fonctions `click(selector)` et `clickLabel(selector, type)` qui permettent de suivre un lien :
+
+{% highlight coffeescript %}
+# <a href="...">My link is beautiful</a>
+casper.then ->
+  @clickLabel 'My link is beautiful', 'a'
+
+# <button type="submit">But my button is sexier</button>
+casper.then -> 
+  @clickLabel 'But my button is sexier', 'button'
+{% endhighlight %}
+
+
+Le code source des liens composant le menu de l'administration de Magento n'est pas aussi propre. Pour se simplifier la vie, on peut alors créer des fonctions spécifiques :
+
+{% highlight coffeescript %}
+# Liens du menu : <a href="..."><span>Label</span></a>
+casper.clickLabelMagento = (selector) ->
+  @click x("//span[contains(text(), '#{ selector }')]/..")
+
+# Liens de sections de configuration : <a href="#"><span>       Label        </span></a>
+casper.clickConfigurationMagento = (selector) ->
+  @click x("//ul[@id='system_config_tabs']//span[contains(text(), '#{ selector }')]/..")
+
+
+# Exemple : accès à la section 'Design' de la configuration
+casper.then ->
+  @clickLabelMagento 'Configuration'
+casper.then ->
+  @test.assertTitle "Configuration / Système / Admin Magento", "Configuration"
+  @test.info "Current location is " + @getCurrentUrl()
+casper.then ->
+  @clickConfigurationMagento "Design"
+{% endhighlight %}
+
+
+## Configurer un magasin
+
+Le système de configuration de Magento se base sur un système de _portée_ : on peut agir sur le _website_, le _magasin_ ou le _storeview_. Ainsi, à chaque niveau, il est possible de surcharger la configuration par défaut du niveau parent.
+
+![Choix de la portée de la configuration dans Magento]({{site.url}}//media/magento-scope.png)
+
+Pour configurer un magasin via un script Casper, la première étape est donc de sélectionner le bon scope de configuration dans le menu déroulant : 
+
+{% highlight coffeescript %}
+casper.then ->
+  @evaluate (value) -> 
+    # Selecting requested scope
+    element = document.querySelector('select#store_switcher')
+    element.value = value
+    # Firing onchange event to change configuration
+    evt = document.createEvent('HTMLEvents')
+    evt.initEvent('change', false, true)
+    element.dispatchEvent(evt)
+  , value : "store_test"
+{% endhighlight %}
+
+
+La fonction `evaluate` permet d'exécuter du code dans le contexte de la page distante. Ici, on sélectionne l'élément voulu dans le menu déroulant (dans l'exemple, le store view ayant le code test) puis on déclenche un évènement `onchange` pour que le changement soit pris en compte.
+
+
+Une fois sur la page de configuration du niveau choisi, il n'y a plus qu'à renseigner les champs nécessaires. CasperJS permet nativement de gérer très simplement les formulaires, mais encore une fois, il va falloir s'adapter à Magento pour prendre en compte la case _"Valeur du site web"_ :
+
+![Formulaire de configuration dans Magento]({{site.url}}/media/magento-configuration.png)
+
+{% highlight coffeescript %}
+
+casper.disableInherit = (selector) ->
+  isChecked = @evaluate (selector) ->
+    return document.querySelector(selector).checked
+  , selector : selector
+  if isChecked
+    @click selector
+
+
+# Configuration des URLs du magasin
+casper.then ->
+  @clickLabelMagento 'Configuration'
+casper.then ->
+  @clickConfigurationMagento "Web"
+casper.then ->
+  @disableInherit "#web_unsecure_base_url_inherit"
+  @disableInherit "#web_secure_base_url_inherit"
+
+  @fill "form#config_edit_form", {
+    "groups[unsecure][fields][base_url][value]"  : "http://test-magento.dev.tea-ebook.com",
+    "groups[secure][fields][base_url][value]"    : "https://test-magento.dev.tea-ebook.com"
+    }, true
+casper.then ->
+  @test.assertTextExists "La configuration a été sauvegardée.", "Configuration URLs magasin"
+{% endhighlight %}
+
+Ainsi, le code précédent s'assure par la fonction `disableInherit` que les cases _"Valeur du site web"_ sont bien décochée avant de remplir le formulaire (ici, les URLs du magasin). 
+
+
+

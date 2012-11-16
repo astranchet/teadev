@@ -1,0 +1,11 @@
+destination: ./_site
+pygments:    true
+markdown:    rdiscount
+exclude:     Rakefile
+permalink:   /:title.html
+rdiscount:
+  smart:     true
+
+#url:         http://dev.tea-ebook.com
+url:         http://teadev.alwaysdata.net/blog
+

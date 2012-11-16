@@ -1,0 +1,26 @@
+---
+layout: post
+tags : [organisation]
+title: Savoir s'arrêter
+author: Anne-Sophie
+email: astranchet@tea-ebook.com
+twitter: annso_
+---
+
+{% excerpt %}
+Même pendant un sprint, il est intéressant de pouvoir prendre du temps pour tester et __essayer de nouvelles choses__ (passer le déploiement d'un projet sous Capistrano, mettre en place Behat, refactoriser telle partie du code...) Mais, pour que cette recherche soit efficace et utile, il est encore plus important de __savoir s'arrêter__. Le risque est sinon d'y passer beaucoup plus de temps que prévu initialement (sous réserve que l'on se soit déjà accordé un temps limité), de dévier, de s'embourber, de tomber dans le perfectionnisme, et au final, de ne jamais arriver à un __état fini et utilisable__.
+{% endexcerpt %}
+
+Il faut donc réussir à lâcher prise, à se dire _« Je n'ai pas pu aller au bout de mon objectif, mais ce n'est pas grave. Ma solution est utilisable pour le moment, et est améliorable dans le futur. »_.
+
+Dans notre équipe, nous utilisons le terme du __time-boxing__. Se time-boxer, c'est _s'accorder du temps limité_ (20 minutes, 2 heures, l'après-midi, 2 jours...) pour essayer une nouvelle technologie, étudier une possibilité, améliorer un aspect du code...
+
+* Quand le tiers du temps accordé s'est écoulé, on s'arrête une première fois pour évaluer la situation&#160;:&#160;a-t-on avancé ? arrivera-t-on à faire la tâche estimée dans les temps ? Il peut-être déjà temps de __redéfinir le périmètre__ à quelque chose de plus réaliste. 
+* Aux deux tiers de temps écoulé, on s'arrête une deuxième fois pour se poser la question : cela vaut-il le coup d'investir encore plus de temps (limité) dans la tâche, ou vaut-il mieux s'arrêter là ?
+
+En choisissant de s'arrêter, on peut alors passer le tiers de temps restant à terminer ce qui a été commencé dans l'objectif d'arriver à un état propre, utilisable.
+
+
+Au final, le time-boxing nous permet de concentrer nos efforts sur une tâche, et d'éviter la boucle infinie du temps engagé (_« J'ai déjà passé la matinée là dessus, si je m'arrête maintenant, ça n'aura servi à rien»_). À la fin du temps imparti, la tâche peut surement encore être améliorée, il reste probablement encore des aspects à gérer, mais elle est __utilisable en l'état__ (même si la procédure de déploiement automatique ne gère pas les retours en arrière; si les tests Behat ne couvrent pas tout l'applicatif; ou si le code nécessite encore un peu plus de refactoring). 
+
+Le travail a été amorcé, des choses ont été mises en places et ça marche. À notre charge d'y revenir plus tard si les manques sont vraiment indispensables. 

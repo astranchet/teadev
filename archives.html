@@ -1,0 +1,16 @@
+---
+layout: master
+lang: fr
+---
+
+{% for post in site.posts %}
+  <article class="full-width">
+    <h1><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h1>
+    <aside class="infos">Écrit par 
+    	{% if post.twitter %}
+    	  <a href="https://www.twitter.com/{{ post.twitter }}">{{ post.author }}</a>
+    	{% else %}
+    	  {{ post.author }}
+    	{% endif %}  le {{ post.date | date:'%e %B %Y' }}.</aside>
+  </article>
+{% endfor %}

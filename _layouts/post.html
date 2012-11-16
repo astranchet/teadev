@@ -1,0 +1,48 @@
+---
+layout: master
+---
+
+<aside class="infos">
+
+  <p class="gravatar"><img src="{{ page.email | gravatar }}" alt="{{ page.author}}" /></p>
+
+  <p class="author"> 
+    {% if page.twitter %}
+      <a href="https://www.twitter.com/{{ page.twitter }}">{{ page.author }}</a>
+    {% else %}
+      {{ page.author }}
+    {% endif %}<br />
+    // {{ page.date | localize: ":short" }}
+  </p>
+
+   <ul class="tags">
+    {% for tag in page.tags %}
+      <li><a href="{{ site.url}}/tag/{{ tag }}/">{{ tag }}</a></li>
+    {% endfor %}
+  </ul>
+
+  <p class="illus"><img src="{{ site.url }}/img/apo2.png" alt="TEA Ebook" /></p>
+
+</aside>
+
+<article>
+  <h1>{{ page.title }}</h1>
+  {{ content }}
+</article>
+
+
+
+
+<nav class="prev-next"> 
+  <div class="left"> 
+    {% if page.previous.url %} 
+      <a href="{{page.previous.url}}" title="Article précédent : {{page.previous.title}}">&larr; {{page.previous.title}}</a> 
+    {% endif %} 
+  </div> 
+
+  <div class="right"> 
+    {% if page.next.url %} 
+      <a href="{{page.next.url}}" title="Article suivant : {{page.next.title}}">{{page.next.title}} &rarr; </a> 
+    {% endif %} 
+  </div> 
+</nav> 

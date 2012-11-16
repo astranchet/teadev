@@ -1,0 +1,9 @@
+destination: ./_site
+pygments:    true
+markdown:    rdiscount
+exclude:     Rakefile
+permalink:   /:title.html
+rdiscount:
+  smart:     true
+
+url:         http://localhost:3000

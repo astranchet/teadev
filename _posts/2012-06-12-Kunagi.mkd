@@ -1,0 +1,47 @@
+---
+layout: post
+tags : [organisation, Scrum, retour expérience]
+title: Kunagi, outil de gestion Scrum
+author: Anne-Sophie
+email: astranchet@tea-ebook.com
+twitter: annso_
+published: false
+---
+
+{% excerpt %}
+En mettant en place une méthodologie agile, notre équipe s'est vite posé la question des outils. Pour commencer, nous avons fait au plus rapide : un tableur partagé sous Google Docs. 
+Pendant plusieurs mois, cela nous a permis de gérer la backlog et les sprints :
+
+* Une feuille pour la __backlog__ pour la liste des fonctionnalités attendues, leur taille technique et leur valeur fonctionnelle. 
+* Une feuille par __sprint__ définissant la liste des fonctionnalités engagées dans le sprint.
+{% endexcerpt %}
+
+Sur une base journalière, notre équipe de développement maintenait les colonnes *État* (en cours, terminé), *Qui*, et *Détail* de la feuille de sprint. Ponctuellement, Ingrid, notre chef de produit fonctionnel, priorisait les tâches de la backlog à coup de grands copier/coller. Enfin, à chaque changement de sprint, nous faisons une revue du sprint :
+
+* Démonstration, puis validation (ou invalidation) de chaque tâche (en changeant sa couleur de fond&nbsp;:&nbsp;rouge ou vert)
+* Retrospective (dans un wiki annexe)
+* Préparation du nouveau sprint, encore une fois à grand coups de copier-coller des tâches de la backlog vers un nouvel onglet.
+
+
+Bien qu'un peu limité et pas toujours pratique, ce mode de fonctionnement nous a servi pendant plusieurs mois et nous a permis de bien cerner notre besoin. Nous avons donc orienté nos recherches sur un outil Scrum qui permette de gérer :
+
+  * la backlog
+  * les stories
+  * eventuellement les tâches 
+
+Notre plus grosse attente était au niveau ergonomique. Nous voulions quelque chose qui permette de gérer de manière pratique les tâches __récurrentes__ :
+
+  * la priorisation des tâches (par drag 'n drop par exemple) 
+  * la validation des story (en un clic si possible)
+
+
+Après avoir tenté des plugins Redmine pour Scrum, puis [Icescrum](http://www.icescrum.org/) - tous trop complexes pour nos besoins, nous avons finalement adopté [Kunagi](http://kunagi.org/).
+
+
+
+TODO : Présentation rapide de Kunagi avec captures ?
+
+
+
+
+![Vue d'un sprint](/media/kunagi-excel.png)

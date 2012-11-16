@@ -1,0 +1,81 @@
+---
+layout: post
+tags : [conférence, retour expérience]
+title: Retour expérience sur MixIT 2012
+author: Anne-Sophie
+email: astranchet@tea-ebook.com
+twitter: annso_
+---
+
+{% excerpt %}
+Pour inaugurer le blog dev de TEA, voici mon retour sur Mix-IT 2012. Je vais revenir sur chacune des conférences auxquelles j'ai assisté, d'abord pour mes collègues qui n'y étaient pas mais aussi pour offrir un retour à l'équipe et aux orateurs de Mix IT.
+
+Brièvement, [Mix IT](http://www.mix-it.fr/) (prononcer *mixité*) est un évènement qui propose un ensemble de conférences tout au long d'une journée. Les sujets varient autour de thèmes principaux : Agilité, Technologies, Web... 
+{% endexcerpt %}
+
+Cette année, MixIT a rassemblé plus de 400 personnes. Les conférences se déroulant en même temps dans 5 salles différentes, chacun peut alors construire son programme et assister aux conférences qui l'intéresse. Voici mon retour qui est donc surêment bien différent d'un autre : 
+
+
+## Keynote initiale
+
+La journée a commencé par 2 keynotes. Je ne m'attarderais pas sur la première, présentée par Martin Gömer, employé de Google, qui laissait un peu trop le sentiment d'entendre une publicité - mais c'est le jeu des sponsors, ce que je comprends parfaitement.
+
+En revanche, la keynote *Le droit a l'erreur*, présenté par Claire Bondel ([@claireblondel](https://twitter.com/claireblondel)) était vraiment intéressante. Claire a partagé son expérience (ou plutôt celle de ses enfants) sur les différentes méthode d'apprentissage dans le monde et a rappelé que se tromper, c'était avant tout une occassion d'apprendre de ses erreurs. On commence à souvent entendre ce discours, mais tant qu'il n'est pas vraiment rentré dans les moeurs, je pense qu'il n'est jamais inutile d'insister.
+
+
+## L'expérience des billes rouges
+
+J'ai ensuite choisi de commencer la journée par un atelier agile : Alexis Monville ([@alexismonville](https://twitter.com/alexismonville)), grâce a un jeu de rôle et d'improvisation, nous a permis de réfléchir sur les méthodes et surtout les erreurs du management. Il a rappelé les 14 points de [Deming](http://fr.wikipedia.org/wiki/William_Edwards_Deming) (vieux de plus de 30 ans, mais toujours vrais) pour transformer le management d'une organisation  - dont entre autre :
+
+* *Faire disparaître la crainte, en sorte que chacun puisse travailler efficacement pour sa société*
+* *Instaurer une formation permanente pour tous les cadres et tous les membres de la société*
+* *Supprimer les obstacles qui privent les ouvriers, agents de maîtrise, ingénieurs et cadres de leur droit à la fierté du travail* 
+
+Cet atelier m'a permis de confirmer ce dont je m'étais très vite rendue compte : quitter mon ancienne boîte (et ses méthodes de management) pour rejoindre TEA était une excellente décision (*non non, mes chefs ne sont pas derrière moi à l'heure ou j'écris ces lignes*) !
+
+
+## Painless Web App Development with Backbone
+
+J'ai choisi cette conférence pour le sujet : [`backbone.js`](http://backbonejs.org/), dont j'avais beaucoup entendu parler sans prendre le temps de pousser plus loin. Je suis tombée sur la norvégienne Bodil Stokke ([@bodiltv](https://twitter.com/bodiltv)) et ses leggings Space Invaders qui a *tout simplement* codé devant nous un petit client twitter en moins d'une heure. J'ai adoré cette manière vraiment concrète de découvrir une technologie par sa syntaxe, l'agencement du projet et les différents concepts qu'elle utilise. 
+
+
+## Lightning Talks
+
+Là encore, j'ai adoré. Je ne m'étais pas renseignée sur les sujets qui allaient être abordés, chacun a donc été une surprise, souvent très bonne.
+
+Je retiendrais vraiment la première présentation tenue par Jean-Baptiste Dusseaut ([@BodySplash](https://twitter.com/BodySplash)) sur *La voie du programmeur*. Je m'y suis beaucoup reconnue, et je compte vraiment la recommander à tous mes collègues/ex-collègues/copains de promos ! En plus de ça, l'utilisation de [impress.js](https://github.com/bartaz/impress.js) pour les slides était très réussi. Et, cerise sur le gateau, il y avait un lolcat par slide. Franchement, qui dit mieux ?
+
+Mais ce n'était pas le seul lightning talk intéressant, loin de là ! Je pense notamment à Alfred Almendra ([@AlfredAlmendra](https://twitter.com/AlfredAlmendra)) et son texte sur le turnover, presque poétique (à une conférence de geeks, qui l'eût cru !) et à Alexis Monville (encore) sur le passage de la génération X à Y.
+
+Une autre très intéressante était celle de Pamela Fox ([@pamelafox](https://twitter.com/pamelafox)) sur *L'expérience développeur* : quel développeur n'a jamais été confronté à une documentation mal concue ? 
+a des APIs mal construites ? Il s'agissait initialement d'une conférence d'une heure, que là encore, je recommanderai vraiment.
+
+Pour finir sur les lightning talks, je retiens aussi la conférence de Youri Bonnaffé ([@youribm](https://twitter.com/youribm)) sur comment *Décorer son open space*. Derrière le sujet léger, il y a une idée vraiment intéressante : avoir sous les yeux le résultat des tests unitaires nous force à nous en occuper. C'est définitivement un sujet que notre équipe souhaite approfondir. Nous avons déjà pleins d'idées d'items à afficher sur un panic board (le résultat des tests unitaires, un checkup de l'état des serveurs, la courbe des ventes de livres numériques, les derniers tickets du SAV, un monitoring des logs en prod...). Il ne nous manque plus que prendre un peu de temps pour le faire !
+
+
+## Kanban pour les nuls
+
+Là, je voudrais m'excuser, mais j'avais oublié que suivre un cours/une conférence après manger, c'était dur ! J'avoue ne pas avoir retenu grand chose du premier quart d'heure (digestion, toussa toussa). Mais quand même, le sujet était intéressant, alors j'ai fini par accrocher. Une fois compris le concept de *flux tiré* plutôt que *poussé*, j'ai vraiment compris l'intérêt par rapport à Scrum et j'ai maintenant envie d'en savoir plus. Nous appliquons pour le moment chez TEA la méthode Scrum, mais je pense lancer la discussion pour voir si Kanban ne pourrait pas coller encore mieux à notre process.
+ 
+
+## Create Mobile Applications With PhoneGap
+
+Pamela Fox a présenté pendant une heure un retour très complet sur la création d'une application mobile. Ça tombait bien, car c'est un sujet qui a beaucoup été abordé chez TEA : application web ou application native ? Si application native, comment peut-on être présent sur plusieurs plateformes sans multiplier les coûts de développements ? 
+
+À chaque étape du projet, Pamela a listé les options envisageables, et ce qui a conduit ses choix. Elle a parlé de technologies et de frameworks que je connaissais déjà, mais aussi de technologies que j'ai découvertes et qui ont l'air vraiment intéressantes. Et, au dela du sujet *application mobile* qui lui-même m'intéressait, cette conférence était selon moi un parfait modèle des conférences de type *retour sur expérience*. 
+
+
+## ZeroMQ is Magic from the Future
+
+[`zeroMQ`](http://www.zeromq.org/) est la conférence qui m'a le plus déçue. Je l'avais choisi car nous parlions à TEA d'utiliser dans un futur proche la technologie de ce type pour des traitements asynchrones. Ne connaissant `zeroMQ` quasiment que le nom, j'avais envie de savoir à quoi ça servait, et ce qu'on pouvait en faire... Le titre de la conférence était enthousiasmant, mais hélas je n'en ai pas appris beaucoup plus. Finalement, j'ai plutot appris comment Pieter Hintjens ([@hintjens](https://twitter.com/hintjens)) gère la communauté autour du programme, ce qui finalement est tout de même intéressant - mais pas ce que j'attendais. 
+
+## Keynote finale
+
+La keynote finale a été présenté par Pamela Fox (après tout, elle venait de San Franciso, elle méritait bien de parler 3 fois). Selon elle, n'importe qui pourrait et <u>devrait</u> apprendre l'informatique, et aurait à y gagner, qu'il soit pompier, artiste ou architecte. L'idée est très intéressante sur le fond, mais malheureusement, les nombreux exemples d'initiatives fournies par Pamela étaient en anglais. Il serait intéressant de faire un listing des ressources existant en français ([Site du zéro](http://www.siteduzero.com/) mais après ?). D'ailleurs, il n'existe à ma connaissance, aucune université française qui mettrait des slides ou des vidéos à disposition de n'importe qui (c'est d'ailleurs déjà difficile d'obtenir ce genre d'outils quand on y est étudiant...)
+
+## Mon impression générale
+
+Ma journée était vraiment variée mais équilibrée : j'ai choisi mes conférences moitié français, moitié anglais; j'ai assisté à au moins une conférence dans chacun des thèmes proposés et puis j'ai pu apprécier différents formats : conférence, lightning talk, atelier, live coding.
+
+
+Donc vraiment, Mix-IT, merci de proposer des conférences de cette qualité et de cette diversité, surtout à ce prix là ! 
